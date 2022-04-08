@@ -1,25 +1,25 @@
 from flask import Flask, render_template, json
 from const import APP_KEY
 from data import db_session
-from flask_login import LoginManager, login_user
+# from flask_login import LoginManager, login_user
 
 from forms.login import LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = APP_KEY
-login_manager = LoginManager()
-login_manager.init_app(app)
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 
 
 def main():
-    db_session.global_init("db/orange.db")
+    # db_session.global_init("db/orange.db")
     app.run()
 
 
 @app.route('/')
 @app.route('/main')
 def str_main():
-    return render_template('base.html', title='Главная', account_name='Тестовый')
+    return render_template('main.html', title='Главная')
 
 
 # @login_manager.user_loader
