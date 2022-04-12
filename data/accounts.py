@@ -1,5 +1,6 @@
 import datetime
 import sqlalchemy
+from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
 
@@ -17,5 +18,4 @@ class Account(SqlAlchemyBase, UserMixin):
     is_moderator = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
     is_email_true = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
 
-    def __repr__(self):
-        pass
+    posts = orm.relation('Post', back_populates='author')

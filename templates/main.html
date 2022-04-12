@@ -1,20 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>Главная страница</h2>
 <div class="row">
     <div class="col">
-        <h2>Главная страница</h2>
+        {% for post in posts%}
         <div class="card" style="width: 50rem;">
-          <img src="..." class="card-img-top" alt="...">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">{{ post.text }}</p>
+            <div>
+                Автор - {{ post.author_id.name }}, Дата написания - {{ post.created_date }}
+            </div>
           </div>
         </div>
+        {% endfor %}
     </div>
     <div class="col">
-        <p>Актуальные темы:</p>
+        <div class="list-group">
+            <li class="list-group-item list-group-item-action list-group-item-success">Актуальные темы:</li>
+            {% for topic in topics%}
+                <a href="/title/{{ topic.id }}" class="list-group-item list-group-item-action">{{ topic.title}}</a>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

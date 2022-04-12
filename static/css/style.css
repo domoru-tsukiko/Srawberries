@@ -1,5 +1,11 @@
 body {
-background-color: #85A992;}
+background-color: #D6F5E1;}
 
 h2 {
-padding-left: 15;}
+margin-top: 25px;
+}
+
+.col{
+margin: 25px;
+}
+
