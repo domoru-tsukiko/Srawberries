@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ topic.title }}</h2>
+<div class="row">
+    <div class="col">
+        {% for post in posts%}
+        <div class="card" style="width: 50rem;">
+             {% if post.img_path != None %}
+                    <img src='{{ post.img_path }}' class="img-fluid rounded-start" alt="...">
+             {% endif %}
+          <div class="card-body">
+            <a href="post/{{ post.id }}" class="link-success">
+                <h5>{{ post.title }}</h5>
+            </a>
+            <p class="card-text">{{ post.text }}</p>
+            <div>
+                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Дата написания - {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col">
+
+    </div>
+</div>
+{% endblock %}

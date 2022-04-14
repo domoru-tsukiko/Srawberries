@@ -4,13 +4,16 @@
 <h2>Главная страница</h2>
 <div class="row">
     <div class="col">
-        {% for post in posts%}
+        {% for post in posts %}
         <div class="card" style="width: 50rem;">
+            {% if post.img_path != None %}
+                    <img src='{{ post.img_path }}' class="img-fluid rounded-start" alt="...">
+             {% endif %}
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
             <p class="card-text">{{ post.text }}</p>
             <div>
-                Автор - {{ post.author_id.name }}, Дата написания - {{ post.created_date }}
+                Автор - {{ post.author.name }}, Дата написания - {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
             </div>
           </div>
         </div>
@@ -18,9 +21,9 @@
     </div>
     <div class="col">
         <div class="list-group">
-            <li class="list-group-item list-group-item-action list-group-item-success">Актуальные темы:</li>
-            {% for topic in topics%}
-                <a href="/title/{{ topic.id }}" class="list-group-item list-group-item-action">{{ topic.title}}</a>
+            <li class="list-group-item list-group-item-success">Актуальные темы:</li>
+            {% for topic in topics %}
+                <a href="/topic/{{ topic.id }}" class="list-group-item list-group-item-action">{{ topic.title }}</a>
             {% endfor %}
         </div>
     </div>

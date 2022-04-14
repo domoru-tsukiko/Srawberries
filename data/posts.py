@@ -21,3 +21,4 @@ class Post(SqlAlchemyBase):
 
     author = orm.relation('Account')
     topic = orm.relation('Topic')
+    like = orm.relation('Like', back_populates='post')
