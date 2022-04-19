@@ -7,6 +7,8 @@ from data.topics import Topic
 from data.accounts import Account
 from forms.login import LoginForm
 from forms.user import RegisterForm
+from forms.create_post import CreatePost
+from flask_login import current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = APP_KEY
@@ -43,9 +45,25 @@ def catalog_id(id):
     return render_template('topic.html', topic=topic, posts=posts, title=f'Тема: "{topic.title}"')
 
 
-@app.route('/topic/<int:id>/create-post')
+@app.route('/topic/<int:id>/create-post', methods=['GET', 'POST'])
 def create_post(id):
-    pass
+    form = CreatePost()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        news = Post()
+        news.author_id = current_user.id
+        news.topic_id = id
+        news.title = form.title.data
+        news.content = form.text.data
+        news.count_comments = 0
+        form.img.file.save(f'static/post/{id}/img.jpg')
+        news.img_path = f'static/post/{id}/img.jpg'
+
+        db_sess.add(news)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('create_post.html', title='Добавление поста',
+                           form=form)
 
 
 @app.route('/search')
@@ -62,10 +80,6 @@ def profile():
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(Account).filter(Account.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
