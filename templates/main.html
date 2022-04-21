@@ -6,15 +6,18 @@
     <div class="col">
         {% for post in posts %}
         <div class="card" style="width: 50rem;">
-            {% if post.img_path != None %}
-                    <img src='{{ post.img_path }}' class="img-fluid rounded-start" alt="...">
+             {% if post.img_path != None %}
+                    <img src='{{ post.img_path }}' class="img-fluid rounded-start" alt="не удалось загрузить картинку">
              {% endif %}
           <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
+            <a href="post/{{ post.id }}" class="link-success">
+                <h5>{{ post.title }}</h5>
+            </a>
             <p class="card-text">{{ post.text }}</p>
             <div>
-                Автор - {{ post.author.name }}, Дата написания - {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Дата написания - {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
             </div>
+            <a>Нравится ({{ post.count_likes }})</a>
           </div>
         </div>
         {% endfor %}
@@ -25,6 +28,9 @@
             {% for topic in topics %}
                 <a href="/topic/{{ topic.id }}" class="list-group-item list-group-item-action">{{ topic.title }}</a>
             {% endfor %}
+        </div>
+        <div class="d-grid gap-2">
+            <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
         </div>
     </div>
 </div>

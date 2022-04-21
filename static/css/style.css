@@ -13,3 +13,11 @@ margin: 25px;
 font-size: 5;
 font-style: bold;
 }
+
+.list-group{
+margin-bottom: 25px;
+}
+
+.card{
+margin-bottom: 10px;
+}

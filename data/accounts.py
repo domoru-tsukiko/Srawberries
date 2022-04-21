@@ -3,8 +3,12 @@ import sqlalchemy
 from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from . import db_session
 from .db_session import SqlAlchemyBase
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
+
+from .likes import Like
+from .posts import Post
 
 
 class Account(SqlAlchemyBase, UserMixin):
@@ -27,3 +31,10 @@ class Account(SqlAlchemyBase, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
+
+    # def tap_like(self, post):
+    #     db_sess = db_session.create_session()
+    #     if current_user.id not in db_sess.query(Like.author_id).filter(Like.post_id == post.id):
+    #         post.count_likes += 1
+    #         db_sess.add(Like(author_id=current_user.id, post_id=post.id))
+    #         db_sess.commit()

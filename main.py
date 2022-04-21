@@ -1,14 +1,18 @@
+import os
+
 from flask import Flask, render_template, json, redirect
+from werkzeug.utils import secure_filename
+
 from const import APP_KEY
 from data import db_session
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.posts import Post
 from data.topics import Topic
 from data.accounts import Account
+from forms.create_topic import CreateTopic
 from forms.login import LoginForm
 from forms.user import RegisterForm
 from forms.create_post import CreatePost
-from flask_login import current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = APP_KEY
@@ -22,7 +26,7 @@ def main():
 
 
 @app.route('/')
-@app.route('/main')
+@app.route('/main', methods=['GET', 'POST'])
 def str_main():
     db_sess = db_session.create_session()
     posts = db_sess.query(Post)
@@ -35,6 +39,18 @@ def catalog():
     db_sess = db_session.create_session()
     topics = db_sess.query(Topic)
     return render_template('catalog.html', topics=topics, title='Каталог тем Orange forum')
+
+
+@app.route('/create-topic', methods=['GET', 'POST'])
+def create_topic():
+    form = CreateTopic()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        db_sess.add(Topic(title=form.title.data, description=form.description.data, is_moderated=False))
+        db_sess.commit()
+        return redirect('/')
+    return render_template('create_topic.html', title='Добавление темы',
+                           form=form)
 
 
 @app.route('/topic/<int:id>')
@@ -50,14 +66,16 @@ def create_post(id):
     form = CreatePost()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = Post()
-        news.author_id = current_user.id
-        news.topic_id = id
-        news.title = form.title.data
-        news.content = form.text.data
-        news.count_comments = 0
-        form.img.file.save(f'static/post/{id}/img.jpg')
-        news.img_path = f'static/post/{id}/img.jpg'
+        news = Post(topic_id=id, author_id=current_user.id, title=form.title.data, text=form.text.data, count_likes=0,
+                    count_comments=0, is_moderated=False)
+        if not os.path.exists(f'/static/post/{id}'):
+            os.mkdir(f'/static/post/{id}')
+        if form.img.data:
+            f = form.img.data
+            filename = secure_filename(f.filename)
+            f.save(f'/static/post/{id}/{filename}')
+            news.img_path = f'/static/post/{id}/{filename}'
+
 
         db_sess.add(news)
         db_sess.commit()

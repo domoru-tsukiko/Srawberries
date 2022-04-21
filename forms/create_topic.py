@@ -3,8 +3,7 @@ from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 
-class CreatePost(FlaskForm):
+class CreateTopic(FlaskForm):
     title = StringField("Название", validators=[DataRequired()])
-    text = TextAreaField('Текст записи', validators=[DataRequired()])
-    submit = SubmitField('Создать')
-
+    description = TextAreaField('Описание', validators=[DataRequired()])
+    submit = SubmitField('Отправить на модерацию')
