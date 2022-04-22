@@ -30,7 +30,11 @@
             {% endfor %}
         </div>
         <div class="d-grid gap-2">
-            <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
+            {% if current_user.is_authenticated %}
+                <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
+            {% else %}
+                <a href="/create-topic" type="button" class="btn btn-success disabled">Создать тему</a>
+            {% endif %}
         </div>
     </div>
 </div>

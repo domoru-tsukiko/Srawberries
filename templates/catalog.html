@@ -6,11 +6,15 @@
     <div class="col">
         {% for topic in topics %}
         <div class="card" style="width: 50rem;">
-          <img src='{{ topic.img_path }}' class="img-fluid rounded-start" alt="...">
+          <img src='{{ topic.img_path }}' class="img-fluid rounded-start" alt="не удалось загрузить картинку">
           <div class="card-body">
             <h5 class="card-title">{{ topic.title }}</h5>
             <p class="card-text">{{ topic.description }}</p>
-            <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success">Создать пост</a>
+            {% if current_user.is_authenticated %}
+                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success">Создать пост</a>
+            {% else %}
+                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success disabled">Создать пост</a>
+            {% endif %}
             <a href="/topic/{{ topic.id }}" type="button" class="btn btn-success">Перейти</a>
           </div>
         </div>
@@ -18,7 +22,11 @@
     </div>
     <div class="col">
         <div class="d-grid gap-2">
-            <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
+            {% if current_user.is_authenticated %}
+                <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
+            {% else %}
+                <a href="/create-topic" type="button" class="btn btn-success disabled">Создать тему</a>
+            {% endif %}
         </div>
     </div>
 </div>

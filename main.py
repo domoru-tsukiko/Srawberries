@@ -29,7 +29,8 @@ def main():
 @app.route('/main', methods=['GET', 'POST'])
 def str_main():
     db_sess = db_session.create_session()
-    posts = db_sess.query(Post)
+    posts = list(db_sess.query(Post).all())
+    posts.sort(key=lambda x: x.created_date, reverse=True)
     topics = db_sess.query(Topic)
     return render_template("main.html", posts=posts, topics=topics, title="Главная страница Orange forum")
 
@@ -37,7 +38,8 @@ def str_main():
 @app.route('/topic')
 def catalog():
     db_sess = db_session.create_session()
-    topics = db_sess.query(Topic)
+    topics = list(db_sess.query(Topic).all())
+    topics.sort(key=lambda x: x.title)
     return render_template('catalog.html', topics=topics, title='Каталог тем Orange forum')
 
 
@@ -57,7 +59,8 @@ def create_topic():
 def catalog_id(id):
     db_sess = db_session.create_session()
     topic = db_sess.query(Topic).filter(Topic.id == id).first()
-    posts = db_sess.query(Post).filter(Post.topic_id == id)
+    posts = list(db_sess.query(Post).filter(Post.topic_id == id).all())
+    posts.sort(key=lambda x: x.created_date, reverse=True)
     return render_template('topic.html', topic=topic, posts=posts, title=f'Тема: "{topic.title}"')
 
 
@@ -68,15 +71,6 @@ def create_post(id):
         db_sess = db_session.create_session()
         news = Post(topic_id=id, author_id=current_user.id, title=form.title.data, text=form.text.data, count_likes=0,
                     count_comments=0, is_moderated=False)
-        if not os.path.exists(f'/static/post/{id}'):
-            os.mkdir(f'/static/post/{id}')
-        if form.img.data:
-            f = form.img.data
-            filename = secure_filename(f.filename)
-            f.save(f'/static/post/{id}/{filename}')
-            news.img_path = f'/static/post/{id}/{filename}'
-
-
         db_sess.add(news)
         db_sess.commit()
         return redirect('/')

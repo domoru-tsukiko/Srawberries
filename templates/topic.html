@@ -23,7 +23,13 @@
         {% endfor %}
     </div>
     <div class="col">
-        <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success">Создать пост</a>
+        <div class="d-grid gap-2">
+            {% if current_user.is_authenticated %}
+                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success">Создать пост</a>
+            {% else %}
+                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success disabled">Создать пост</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

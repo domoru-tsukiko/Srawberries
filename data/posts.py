@@ -22,3 +22,6 @@ class Post(SqlAlchemyBase):
     author = orm.relation('Account')
     topic = orm.relation('Topic')
     like = orm.relation('Like', back_populates='post')
+
+    def __repr__(self):
+        return f'{self.id, self.topic_id, self.author_id, self.title, self.text, self.img_path, self.count_likes, self.count_comments, self.created_date, self.is_moderated}'
