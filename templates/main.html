@@ -6,23 +6,31 @@
     <div class="col">
         {% for post in posts %}
         <div class="card" style="width: 50rem;">
-             {% if post.img_path != None %}
-                    <img src='{{ post.img_path }}' class="img-fluid rounded-start" alt="не удалось загрузить картинку">
-             {% endif %}
           <div class="card-body">
             <a href="post/{{ post.id }}" class="link-success">
                 <h5>{{ post.title }}</h5>
             </a>
-            <p class="card-text">{{ post.text }}</p>
-            <div>
-                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Дата написания - {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
-            </div>
-            <a>Нравится ({{ post.count_likes }})</a>
+            <div><i>
+                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - {{ post.topic.title }} {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+            </i></div>
+              <p>
+              <p class="card-text">{{ post.text }}</p>
+              <a><i>Нравится ({{ post.count_likes }})</i></a>
           </div>
         </div>
         {% endfor %}
     </div>
     <div class="col">
+        {% if current_user.is_authenticated %}
+            <div class="grid">
+            {% if current_user.is_moderator %}
+                <img src="{{url_for('static', filename='img/moder.png')}}" alt="" width="80" height="80" class="d-inline-block align-middle">
+            {% else %}
+                <img src="{{url_for('static', filename='img/user.png')}}" alt="" width="80" height="80" class="d-inline-block align-middle">
+            {% endif %}
+                <h3>{{ current_user.name }}</h3>
+        </div>
+        {% endif %}
         <div class="list-group">
             <li class="list-group-item list-group-item-success">Актуальные темы:</li>
             {% for topic in topics %}

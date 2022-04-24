@@ -61,7 +61,7 @@ def catalog_id(id):
     topic = db_sess.query(Topic).filter(Topic.id == id).first()
     posts = list(db_sess.query(Post).filter(Post.topic_id == id).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
-    return render_template('topic.html', topic=topic, posts=posts, title=f'Тема: "{topic.title}"')
+    return render_template('topic.html', topic=topic, posts=posts, len_post=len(posts), title=f'Тема: "{topic.title}"')
 
 
 @app.route('/topic/<int:id>/create-post', methods=['GET', 'POST'])
@@ -69,7 +69,8 @@ def create_post(id):
     form = CreatePost()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = Post(topic_id=id, author_id=current_user.id, title=form.title.data, text=form.text.data, count_likes=0,
+        topic = db_sess.query(Topic).filter(Topic.id == id).first()
+        news = Post(topic_id=id, topic=topic, author_id=current_user.id, title=form.title.data, text=form.text.data, count_likes=0,
                     count_comments=0, is_moderated=False)
         db_sess.add(news)
         db_sess.commit()
@@ -80,12 +81,30 @@ def create_post(id):
 
 @app.route('/search')
 def search():
+    db_sess = db_session.create_session()
+    if submit:
     return render_template('search.html', title='Поиск по сайту Orange forum')
 
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html', title='Профиль пользователя Orange forum')
+    db_sess = db_session.create_session()
+    posts = list(db_sess.query(Post).filter(Post.author_id == current_user.id).all())
+    posts.sort(key=lambda x: x.created_date, reverse=True)
+    statics = [f'Постов {len(posts)}', f'Лайков под постами {current_user.count_like()}', f'Комментариев под постами {current_user.count_comm()}', f'Оставленных комментариев {current_user.count_my_comm()}']
+    return render_template('profile.html', user=current_user, user_id=current_user.id, posts=posts, len_post=len(posts), statics=statics, title='Профиль пользователя Orange forum')
+
+
+@app.route('/profile/<int:id>')
+def profile_id(id):
+    if id == current_user.id:
+        return redirect("/profile")
+    db_sess = db_session.create_session()
+    user = db_sess.query(Account).filter(Account.id == id).first()
+    posts = list(db_sess.query(Post).filter(Post.author_id == user.id).all())
+    posts.sort(key=lambda x: x.created_date, reverse=True)
+    statics = [f'Постов {len(posts)}', f'Лайков под постами {user.count_like()}', f'Комментариев под постами {user.count_comm()}', f'Оставленных комментариев {user.count_my_comm()}']
+    return render_template('profile.html', user=user, user_id=user.id, posts=posts, len_post=len(posts), statics=statics, title='Профиль пользователя Orange forum')
 
 
 @app.route('/register', methods=['GET', 'POST'])

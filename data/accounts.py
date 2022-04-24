@@ -9,6 +9,7 @@ from flask_login import UserMixin, current_user
 
 from .likes import Like
 from .posts import Post
+from .comments import Comment
 
 
 class Account(SqlAlchemyBase, UserMixin):
@@ -31,6 +32,27 @@ class Account(SqlAlchemyBase, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
+
+    def count_like(self):
+        db_sess = db_session.create_session()
+        posts = db_sess.query(Post.count_likes).filter(Post.author_id == current_user.id).all()
+        a = []
+        for post in posts:
+            a.append(post[0])
+        return sum(a)
+
+    def count_comm(self):
+        db_sess = db_session.create_session()
+        posts = db_sess.query(Post.count_comments).filter(Post.author_id == current_user.id)
+        a = []
+        for post in posts:
+            a.append(post[0])
+        return sum(a)
+
+    def count_my_comm(self):
+        db_sess = db_session.create_session()
+        comms = db_sess.query(Comment).filter(Comment.author_id == current_user.id).all()
+        return len(comms)
 
     # def tap_like(self, post):
     #     db_sess = db_session.create_session()
