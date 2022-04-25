@@ -13,9 +13,6 @@ class Comment(SqlAlchemyBase):
     author_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("accounts.id"))
     text = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-    is_answer = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
-    answer_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('comments.id'))
 
     author = orm.relation('Account')
     post = orm.relation('Post')
-    answer = orm.relation('Comment')

@@ -1,9 +1,5 @@
-import os
-
-from flask import Flask, render_template, json, redirect, request
-from werkzeug.utils import secure_filename
-
-from const import APP_KEY
+from flask import Flask, render_template, redirect, request
+from waitress import serve
 from data import db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
@@ -19,14 +15,15 @@ from forms.user import RegisterForm
 from forms.create_post import CreatePost
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = APP_KEY
+app.config['SECRET_KEY'] = '1234567890'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 
 def main():
     db_session.global_init("db/orange.db")
-    app.run()
+    # app.run()
+    serve(app, host='127.0.0.1', port=5000)
 
 
 # главная страница
@@ -37,7 +34,7 @@ def str_main():
     posts = list(db_sess.query(Post).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
     topics = db_sess.query(Topic)
-    return render_template("main.html", posts=posts, topics=topics, title="Главная страница Orange forum")
+    return render_template("main.html", posts=posts, len_post=len(posts), topics=topics, title="Главная страница Orange forum")
 
 
 # каталог и темы
@@ -155,7 +152,7 @@ def create_comment(id):
     form = CreateComment()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        comm = Comment(post_id=id, author_id=current_user.id, text=form.text.data, is_answer=False, answer_id=0)
+        comm = Comment(post_id=id, author_id=current_user.id, text=form.text.data)
         post = db_sess.query(Post).filter(Post.id == id).first()
         post.count_comments += 1
         db_sess.add(comm)
@@ -179,7 +176,6 @@ def reqister():
         user.email = form.email.data
         user.about = form.about.data
         user.is_moderator = False
-        user.is_email_true = False
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()

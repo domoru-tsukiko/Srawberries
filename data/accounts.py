@@ -20,12 +20,12 @@ class Account(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    img_path = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     is_moderator = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
-    is_email_true = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
 
     posts = orm.relation('Post', back_populates='author')
+    likes = orm.relation('Like', back_populates='author')
+    comment = orm.relation('Comment', back_populates='author')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -53,10 +53,3 @@ class Account(SqlAlchemyBase, UserMixin):
         db_sess = db_session.create_session()
         comms = db_sess.query(Comment).filter(Comment.author_id == current_user.id).all()
         return len(comms)
-
-    # def tap_like(self, post):
-    #     db_sess = db_session.create_session()
-    #     if current_user.id not in db_sess.query(Like.author_id).filter(Like.post_id == post.id):
-    #         post.count_likes += 1
-    #         db_sess.add(Like(author_id=current_user.id, post_id=post.id))
-    #         db_sess.commit()
