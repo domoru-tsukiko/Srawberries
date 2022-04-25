@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, json, redirect
+from flask import Flask, render_template, json, redirect, request
 from werkzeug.utils import secure_filename
 
 from const import APP_KEY
@@ -9,6 +9,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from data.posts import Post
 from data.topics import Topic
 from data.accounts import Account
+from forms.appendix import SearchForm
 from forms.create_topic import CreateTopic
 from forms.login import LoginForm
 from forms.user import RegisterForm
@@ -79,11 +80,21 @@ def create_post(id):
                            form=form)
 
 
-@app.route('/search')
+@app.route('/search', methods=['POST', 'GET'])
 def search():
-    db_sess = db_session.create_session()
-    if submit:
-    return render_template('search.html', title='Поиск по сайту Orange forum')
+    if request.method == 'POST':
+        text = request.form['search']
+        text.strip()
+        if text != '':
+            db_sess = db_session.create_session()
+            topics = db_sess.query(Topic).filter(Topic.title.like(f'%{text}%') | Topic.title.like(f'%{text.lower()}%') | Topic.title.like(f'%{text.upper()}%') | Topic.title.like(f'%{text.capitalize()}%')).all()
+            posts = db_sess.query(Post).filter(Post.title.like(f'%{text}%') | Post.text.like(f'%{text}%') | Post.title.like(f'%{text.lower()}%') | Post.text.like(f'%{text.lower()}%') | Post.title.like(f'%{text.upper()}%') | Post.text.like(f'%{text.upper()}%') | Post.title.like(f'%{text.capitalize()}%') | Post.text.like(f'%{text.capitalize()}%')).all()
+            topics.sort(key=lambda x: x.created_date, reverse=True)
+            posts.sort(key=lambda x: x.created_date, reverse=True)
+            return render_template('search.html', posts=posts, len_post=len(posts), topics=topics, len_topic=len(topics), title='Поиск по сайту Orange forum')
+    posts = []
+    topics = []
+    return render_template('search.html', posts=posts, len_post=len(posts), topics=topics, len_topic=len(topics), title='Поиск по сайту Orange forum')
 
 
 @app.route('/profile')
