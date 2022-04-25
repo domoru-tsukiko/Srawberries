@@ -6,10 +6,13 @@ from werkzeug.utils import secure_filename
 from const import APP_KEY
 from data import db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
+from data.comments import Comment
+from data.likes import Like
 from data.posts import Post
 from data.topics import Topic
 from data.accounts import Account
-from forms.appendix import SearchForm
+from forms.create_comment import CreateComment
 from forms.create_topic import CreateTopic
 from forms.login import LoginForm
 from forms.user import RegisterForm
@@ -26,6 +29,7 @@ def main():
     app.run()
 
 
+# главная страница
 @app.route('/')
 @app.route('/main', methods=['GET', 'POST'])
 def str_main():
@@ -36,6 +40,7 @@ def str_main():
     return render_template("main.html", posts=posts, topics=topics, title="Главная страница Orange forum")
 
 
+# каталог и темы
 @app.route('/topic')
 def catalog():
     db_sess = db_session.create_session()
@@ -80,6 +85,7 @@ def create_post(id):
                            form=form)
 
 
+# поиск
 @app.route('/search', methods=['POST', 'GET'])
 def search():
     if request.method == 'POST':
@@ -97,6 +103,7 @@ def search():
     return render_template('search.html', posts=posts, len_post=len(posts), topics=topics, len_topic=len(topics), title='Поиск по сайту Orange forum')
 
 
+# профили
 @app.route('/profile')
 def profile():
     db_sess = db_session.create_session()
@@ -118,6 +125,46 @@ def profile_id(id):
     return render_template('profile.html', user=user, user_id=user.id, posts=posts, len_post=len(posts), statics=statics, title='Профиль пользователя Orange forum')
 
 
+# посты
+@app.route('/post')
+def posts():
+    db_sess = db_session.create_session()
+    posts = db_sess.query(Post).all()
+    posts.sort(key=lambda x: x.title.lower())
+    return render_template('all_posts.html', posts=posts, len_post=len(posts), title='Посты Orange forum')
+
+
+@app.route('/post/<int:id>', methods=['POST', 'GET'])
+def post(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id).first()
+    comms = db_sess.query(Comment).filter(Comment.post_id).all()
+    if current_user.is_authenticated:
+        like = (current_user.id in db_sess.query(Like.author_id).filter(Like.post_id == id).all())
+        if request.method == 'POST':
+            post.like.append(Like(author_id=current_user.id, post_id=id))
+            post.count_likes += 1
+            db_sess.commit()
+            like = True
+        return render_template('post.html', post=post, comms=comms, like=like, len_comm=len(comms), title=post.title)
+    return render_template('post.html', post=post, comms=comms, len_comm=len(comms), title=post.title)
+
+
+@app.route('/post/<int:id>/create-comment', methods=['POST', 'GET'])
+def create_comment(id):
+    form = CreateComment()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        comm = Comment(post_id=id, author_id=current_user.id, text=form.text.data, is_answer=False, answer_id=0)
+        post = db_sess.query(Post).filter(Post.id == id).first()
+        post.count_comments += 1
+        db_sess.add(comm)
+        db_sess.commit()
+        return redirect(f'/post/{id}')
+    return render_template('create_comment.html', title='Создание комментария', form=form)
+
+
+# формы регистрации и авторизации
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
@@ -127,13 +174,12 @@ def reqister():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        user = Account(
-            name=form.name.data,
-            email=form.email.data,
-            about=form.about.data,
-            is_moderator=False,
-            is_email_true=False
-        )
+        user = Account()
+        user.name = form.name.data
+        user.email = form.email.data
+        user.about = form.about.data
+        user.is_moderator = False
+        user.is_email_true = False
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()

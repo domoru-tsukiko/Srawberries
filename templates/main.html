@@ -11,7 +11,7 @@
                 <h5>{{ post.title }}</h5>
             </a>
             <div><i>
-                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - {{ post.topic.title }} {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - <a href="/topic/{{ post.topic.id }}" class="link-success">{{ post.topic.title }}</a> {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
             </i></div>
               <p>
               <p class="card-text">{{ post.text }}</p>

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ topic.title }}</h2>
 <div class="row">
     <div class="col">
         {% if len_post == 0 %}
@@ -14,11 +13,11 @@
             {% for post in posts %}
             <div class="card" style="width: 50rem;">
               <div class="card-body">
-                <a href="/post/{{ post.id }}" class="link-success">
+                <a href="post/{{ post.id }}" class="link-success">
                     <h5>{{ post.title }}</h5>
                 </a>
                 <div><i>
-                    Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - <a href="/topic/{{ post.topic.id }}" class="link-success">{{ post.topic.title }}</a> {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+                    Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - {{ post.topic.title }} {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
                 </i></div>
                   <p>
                   <p class="card-text">{{ post.text }}</p>
@@ -29,13 +28,7 @@
         {% endif %}
     </div>
     <div class="col">
-        <div class="d-grid gap-2">
-            {% if current_user.is_authenticated %}
-                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success">Создать пост</a>
-            {% else %}
-                <a href="/topic/{{ topic.id }}/create-post" type="button" class="btn btn-success disabled">Создать пост</a>
-            {% endif %}
-        </div>
+
     </div>
 </div>
 {% endblock %}
