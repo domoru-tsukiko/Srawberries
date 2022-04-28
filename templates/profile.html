@@ -36,6 +36,7 @@
                 <img src="{{url_for('static', filename='img/user.png')}}" alt="" width="80" height="80" class="d-inline-block align-middle">
             {% endif %}
                 <h3>{{ user.name }}</h3>
+            <p>{{ user.about }}</p>
         </div>
         <div class="list-group">
             <li class="list-group-item list-group-item-success">Статистика:</li>
@@ -46,6 +47,7 @@
         {% if user_id == current_user.id %}
             <div class="d-grid gap-2">
                 <a href="/create-topic" type="button" class="btn btn-success">Создать тему</a>
+                <a href="/setting/{{ user.id }}" type="button" class="btn btn-success">Настройки профиля</a>
             </div>
         {% endif %}
     </div>

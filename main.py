@@ -43,7 +43,7 @@ def catalog():
     db_sess = db_session.create_session()
     topics = list(db_sess.query(Topic).all())
     topics.sort(key=lambda x: x.title)
-    return render_template('catalog.html', topics=topics, title='Каталог тем Orange forum')
+    return render_template('catalog.html', topics=topics, len_topic=len(topics), title='Каталог тем Orange forum')
 
 
 @app.route('/create-topic', methods=['GET', 'POST'])
@@ -137,7 +137,7 @@ def post(id):
     post = db_sess.query(Post).filter(Post.id == id).first()
     comms = db_sess.query(Comment).filter(Comment.post_id).all()
     if current_user.is_authenticated:
-        like = (current_user.id in db_sess.query(Like.author_id).filter(Like.post_id == id).all())
+        like = ((current_user.id,) in db_sess.query(Like.author_id).filter(Like.post_id == id).all())
         if request.method == 'POST':
             post.like.append(Like(author_id=current_user.id, post_id=id))
             post.count_likes += 1
@@ -159,6 +159,11 @@ def create_comment(id):
         db_sess.commit()
         return redirect(f'/post/{id}')
     return render_template('create_comment.html', title='Создание комментария', form=form)
+
+
+@app.route('/setting/<int:id>')
+def setting(id):
+    pass
 
 
 # формы регистрации и авторизации
