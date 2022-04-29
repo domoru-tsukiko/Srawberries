@@ -135,7 +135,7 @@ def posts():
 def post(id):
     db_sess = db_session.create_session()
     post = db_sess.query(Post).filter(Post.id == id).first()
-    comms = db_sess.query(Comment).filter(Comment.post_id).all()
+    comms = db_sess.query(Comment).filter(Comment.post_id == id).all()
     if current_user.is_authenticated:
         like = ((current_user.id,) in db_sess.query(Like.author_id).filter(Like.post_id == id).all())
         if request.method == 'POST':
