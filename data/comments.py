@@ -14,5 +14,5 @@ class Comment(SqlAlchemyBase):
     text = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
-    author = orm.relation('Account')
-    post = orm.relation('Post')
+    author = orm.relationship('Account')
+    post = orm.relationship('Post')

@@ -14,4 +14,4 @@ class Topic(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     is_moderated = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
 
-    posts = orm.relation('Post', back_populates='topic')
+    posts = orm.relationship('Post', back_populates='topic')

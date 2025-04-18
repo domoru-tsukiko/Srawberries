@@ -18,10 +18,10 @@ class Post(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     is_moderated = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
 
-    author = orm.relation('Account')
-    topic = orm.relation('Topic')
-    like = orm.relation('Like', back_populates='post')
-    comment = orm.relation('Comment', back_populates='post')
+    author = orm.relationship('Account')
+    topic = orm.relationship('Topic')
+    like = orm.relationship('Like', back_populates='post')
+    comment = orm.relationship('Comment', back_populates='post')
 
     def __repr__(self):
         return f'{self.id, self.topic_id, self.author_id, self.title, self.text, self.img_path, self.count_likes, self.count_comments, self.created_date, self.is_moderated}'

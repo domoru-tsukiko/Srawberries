@@ -23,9 +23,9 @@ class Account(SqlAlchemyBase, UserMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     is_moderator = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
 
-    posts = orm.relation('Post', back_populates='author')
-    likes = orm.relation('Like', back_populates='author')
-    comment = orm.relation('Comment', back_populates='author')
+    posts = orm.relationship('Post', back_populates='author')
+    likes = orm.relationship('Like', back_populates='author')
+    comment = orm.relationship('Comment', back_populates='author')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
