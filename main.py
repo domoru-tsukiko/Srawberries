@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = '1234567890'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
+#aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 def main():
     db_session.global_init("db/orange.db")
     # app.run()
