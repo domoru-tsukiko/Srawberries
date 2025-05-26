@@ -11,19 +11,26 @@
     <title>{{ title }}</title>
 </head>
 <body>
-<nav class="navbar sticky-top" style="background-color: #561435;">
+<nav class="navbar navbar-expand-lg sticky-top" style="background-color: #801F4F;">
     <div class="container">
         <div class="grid">
             <a class="navbar-brand" href="/">
-                <img src="{{url_for('static', filename='img/icon.png')}}" alt="" width="80" height="50"
+                <img src="{{url_for('static', filename='img/icon.png')}}" alt="" width="144" height="90"
                      class="d-inline-block align-middle">
             </a>
         </div>
         <form class="d-flex col-sm-8" role="search">
             <input class="form-control me-2" type="search" placeholder="Найти на Strawberries"
                    aria-label="Найти на Strawberries"/>
-            <button class="btn btn-outline-success" type="submit">Поиск</button>
+            <button class="btn btn-outline-light" type="submit">Поиск</button>
         </form>
+        <div style="text-align:center;">
+            <a class="navbar-brand" style="margin-right: 0;" href="/basket">
+                <img src="{{url_for('static', filename='img/moder.png')}}" alt="" width="50" height="50"
+                     class="d-inline-block align-middle">
+            </a>
+            <a class="nav-link active" style="color:white;" aria-current="page" href="/basket">Корзина</a>
+        </div>
         <div class="g-col-6">
             <div class="collapse navbar-collapse" id="navbarSupportedContent3">
                 <ul class="navbar-nav ms-md-auto">
@@ -34,7 +41,8 @@
                                 <img src="{{url_for('static', filename='img/user.png')}}" alt="" width="50" height="50"
                                      class="d-inline-block align-middle">
                             </a>
-                            <a class="nav-link active" aria-current="page" href="/profile">Профиль</a>
+                            <a class="nav-link active" style="color:white;" aria-current="page"
+                               href="/profile">Профиль</a>
                         </div>
                         {% else %}
                         <div style="text-align:center;">
@@ -42,7 +50,7 @@
                                 <img src="{{url_for('static', filename='img/user.png')}}" alt="" width="50" height="50"
                                      class="d-inline-block align-middle">
                             </a>
-                            <a class="nav-link active" href="/login" aria-current="page">Войти</a>
+                            <a class="nav-link active" style="color:white;" href="/login" aria-current="page">Войти</a>
                         </div>
                         {% endif %}
                     </li>
@@ -55,14 +63,15 @@
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
-<div style="background-color: #561435;">
+<div style="background-color: #801F4F;">
+    <br>
     <div class="container">
         <div class="row">
             <div class="col-4">
                 <a style="color:white;">Разработчики</a>
             </div>
             <div class="col-2">
-                <a href="/" style="color:white;" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Главная</a>
+                <a href="/" class="nav-link active" style="color:white; padding:0;" aria-current="page">Каталог</a>
             </div>
         </div>
         <div class="row">
@@ -70,36 +79,32 @@
                 <a style="color:white;">Басова Е. А.</a>
             </div>
             <div class="col-2">
-                <a href="/" style="color:white;" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Главная</a>
+                <a class="nav-link active" style="color:white; padding:0;" aria-current="page"
+                   href="/basket">Корзина</a>
             </div>
         </div>
         <div class="row">
             <div class="col-4">
                 <a style="color:white;">Тавтелев Т. М.</a>
             </div>
-            <div class="col-2">
-                <a href="/" style="color:white;" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Главная</a>
-            </div>
         </div>
         <div class="row">
             <div class="col-4">
                 <a style="color:white;">Иванов Т. М.</a>
-            </div>
-            <div class="col-2">
-                <a href="/" style="color:white;" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Главная</a>
             </div>
         </div>
         <div class="row">
             <div class="col-4">
                 <a style="color:white;">Денис</a>
             </div>
-            <div class="col-2">
-                <a href="/" style="color:white;" class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Главная</a>
-            </div>
+        </div>
+        <div class="row">
+            <br>
         </div>
         <div class="row">
             <a style="color:white;">C Strawberries 2025. Все права защищены</a>
         </div>
+        <br>
     </div>
 </div>
 </body>
