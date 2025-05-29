@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ post.title }}</h2>
+<div class="row">
+    <div class="col">
+        <div class="card" style="width: 50rem;">
+          <div class="card-body">
+            <div><i>
+                Автор - <a href="/profile/{{ post.author.id }}" class="link-success">{{ post.author.name }}</a>, Тема - <a href="/topic/{{ post.topic.id }}" class="link-success">{{ post.topic.title }}</a> {{ post.created_date.strftime("%d/%m/%Y %H:%M") }}
+            </i></div>
+              <p>
+              <p class="card-text">{{ post.text }}</p>
+              {% if current_user.is_authenticated %}
+              {% if like %}
+                <button type="button" class="btn btn-success">Нравится ({{ post.count_likes }})</button>
+              {% else %}
+                <form class="d-flex" method="post">
+                    <button type="submit" class="btn btn-outline-success">Нравится ({{ post.count_likes }})</button>
+                </form>
+              {% endif %}
+              {% else %}
+                <button type="button" class="btn btn-outline-success disabled">Нравится ({{ post.count_likes }})</button>
+              {% endif %}
+          </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="d-grid gap-2">
+            {% if current_user.is_authenticated %}
+                <a href="{{ post.id }}/create-comment" type="button" class="btn btn-success">Прокомментировать</a>
+            {% else %}
+                <a type="button" class="btn btn-success disabled">Прокомментировать</a>
+            {% endif %}
+        </div>
+        {% if len_comm == 0 %}
+            <div class="card" style="width: 20rem;">
+                <div class="card-body">
+                    <h6>Нет комментариев</h6>
+                </div>
+            </div>
+        {% else %}
+            {% for comm in comms %}
+                <div class="card" style="width: 20rem;">
+                    <div class="card-body">
+                        <div><i>
+                        <a href="/profile/{{ comm.author_id }}" class="link-success">{{ comm.author.name }}</a> {{ comm.created_date.strftime("%d/%m/%Y %H:%M") }}
+                    </i></div>
+                    <p>
+                    <p class="card-text">{{ comm.text }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
