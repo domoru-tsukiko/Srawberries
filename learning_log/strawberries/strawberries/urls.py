@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ..webappstraw import views
+from webappstraw.views import catalog, login, signin, profile, basket
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('catalog/', views.catalog),
-    path('login/', views.login),
-    path('signin/', views.signin),
-    path('profile/', views.profile),
-    path('basket/', views.basket)
+    path('/', catalog),
+    path('catalog/', catalog),
+    path('login/', login),
+    path('signin/', signin),
+    path('profile/', profile),
+    path('basket/', basket)
 ]
