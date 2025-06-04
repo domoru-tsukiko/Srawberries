@@ -1,3 +1,3 @@
-cd PycharmProjects\Srawberries\learning_log
+cd learning_log
 ll_env\Scripts\activate.bat
 python strawberries\manage.py runserver

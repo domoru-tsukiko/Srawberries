@@ -3,10 +3,9 @@ from waitress import serve
 from data import db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
-from data.comments import Comment
-from data.likes import Like
+
 from data.posts import Post
-from data.topics import Topic
+
 from data.accounts import Account
 from forms.create_comment import CreateComment
 from forms.create_topic import CreateTopic
@@ -21,7 +20,7 @@ login_manager.init_app(app)
 
 
 def main():
-    db_session.global_init("db/orange.db")
+    db_session.global_init("db/strawberries.db")
     # app.run()
     serve(app, host='127.0.0.1', port=5000)
 
