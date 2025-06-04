@@ -32,17 +32,16 @@ def str_main():
     db_sess = db_session.create_session()
     posts = list(db_sess.query(Post).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
-    topics = db_sess.query(Topic)
-    return render_template("main.html", posts=posts, len_post=len(posts), topics=topics, title="Главная страница Orange forum")
+
+    return render_template("main.html", posts=posts, len_post=len(posts), title="Главная страница Orange forum")
 
 
 # каталог и темы
 @app.route('/topic')
 def catalog():
     db_sess = db_session.create_session()
-    topics = list(db_sess.query(Topic).all())
-    topics.sort(key=lambda x: x.title)
-    return render_template('catalog.html', topics=topics, len_topic=len(topics), title='Каталог тем Orange forum')
+
+    return render_template('catalog.html', title='Каталог тем Orange forum')
 
 
 @app.route('/create-topic', methods=['GET', 'POST'])
@@ -60,7 +59,6 @@ def create_topic():
 @app.route('/topic/<int:id>')
 def catalog_id(id):
     db_sess = db_session.create_session()
-    topic = db_sess.query(Topic).filter(Topic.id == id).first()
     posts = list(db_sess.query(Post).filter(Post.topic_id == id).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
     return render_template('topic.html', topic=topic, posts=posts, len_post=len(posts), title=f'Тема: "{topic.title}"')
