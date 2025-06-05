@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Каталог тем</h2>
+<h2>Общая сумма: {{ sum_of_lapkas}} </h2>
+<div class="row">
+    <div class="col">
+        {% if len_topic == 0 %}
+            <div class="card" style="width: 50rem;">
+                <div class="card-body">
+                    <h5>Не найдено тем</h5>
+                </div>
+            </div>
+        {% else %}
+            {% for lapka in lapkas %}
+            <div class="card" style="width: 50rem;">
+              <div class="card-body">
+                <h5 class="card-title">{{ lapka.title }}</h5>
+                <p class="card-text">{{ lapka.text }}</p>
+                <p class="card-costs">{{ lapka.costs }}</p>
+                <a href="/topic/{{ topic.id }}" type="button" class="btn btn-success">Перейти</a>
+              </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

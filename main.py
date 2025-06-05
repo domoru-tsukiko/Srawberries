@@ -15,14 +15,9 @@ from forms.create_post import CreatePost
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234567890'
+app.debug = True
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-
-def main():
-    db_session.global_init("db/strawberries.db")
-    # app.run()
-    serve(app, host='127.0.0.1', port=5000)
 
 
 # главная страница
@@ -101,10 +96,12 @@ def search():
 @app.route('/profile')
 def profile():
     db_sess = db_session.create_session()
-    posts = list(db_sess.query(Post).filter(Post.author_id == current_user.id).all())
-    posts.sort(key=lambda x: x.created_date, reverse=True)
-    statics = [f'Постов {len(posts)}', f'Лайков под постами {current_user.count_like()}', f'Комментариев под постами {current_user.count_comm()}', f'Оставленных комментариев {current_user.count_my_comm()}']
-    return render_template('profile.html', user=current_user, user_id=current_user.id, posts=posts, len_post=len(posts), statics=statics, title='Профиль пользователя Orange forum')
+    return render_template('profile.html', user=current_user, user_id=current_user.id, title='Профиль пользователя Orange forum')
+
+@app.route('/basket')
+def basket():
+    db_sess = db_session.create_session()
+    return render_template('basket.html', user=current_user, user_id=current_user.id, title='Профиль пользователя Orange forum')
 
 
 @app.route('/profile/<int:id>')
@@ -211,6 +208,13 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+def main():
+    db_session.global_init("db/strawberries.db")
+    # app.run()
+    serve(app, host='127.0.0.1', port=5000)
+
 
 
 if __name__ == '__main__':
