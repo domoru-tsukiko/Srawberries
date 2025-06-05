@@ -26,56 +26,13 @@ login_manager.init_app(app)
 def str_main():
 
     if not current_user.is_authenticated:
-        redirect('/login')
+        return redirect('/login')
 
     db_sess = db_session.create_session()
-    posts = list(db_sess.query(Post).all())
-    posts.sort(key=lambda x: x.created_date, reverse=True)
-
-    return render_template("main.html", posts=posts, len_post=len(posts), title="Главная страница Orange forum")
+    posts = db_sess.query(Post).all()
 
 
-# каталог и темы
-@app.route('/topic')
-def catalog():
-    db_sess = db_session.create_session()
-
-    return render_template('catalog.html', title='Каталог тем Orange forum')
-
-
-@app.route('/create-topic', methods=['GET', 'POST'])
-def create_topic():
-    form = CreateTopic()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        db_sess.add(Topic(title=form.title.data, description=form.description.data, is_moderated=False))
-        db_sess.commit()
-        return redirect('/')
-    return render_template('create_topic.html', title='Добавление темы',
-                           form=form)
-
-
-@app.route('/topic/<int:id>')
-def catalog_id(id):
-    db_sess = db_session.create_session()
-    posts = list(db_sess.query(Post).filter(Post.topic_id == id).all())
-    posts.sort(key=lambda x: x.created_date, reverse=True)
-    return render_template('topic.html', topic=topic, posts=posts, len_post=len(posts), title=f'Тема: "{topic.title}"')
-
-
-@app.route('/topic/<int:id>/create-post', methods=['GET', 'POST'])
-def create_post(id):
-    form = CreatePost()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        topic = db_sess.query(Topic).filter(Topic.id == id).first()
-        news = Post(topic_id=id, topic=topic, author_id=current_user.id, title=form.title.data, text=form.text.data, count_likes=0,
-                    count_comments=0, is_moderated=False)
-        db_sess.add(news)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('create_post.html', title='Добавление поста',
-                           form=form)
+    return render_template("main.html", posts=posts, count_lapka=len(posts), title="Каталог интернет-магазина Strawberries")
 
 
 # поиск
