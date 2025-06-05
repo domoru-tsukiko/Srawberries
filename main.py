@@ -24,6 +24,10 @@ login_manager.init_app(app)
 @app.route('/')
 @app.route('/main', methods=['GET', 'POST'])
 def str_main():
+
+    if not current_user.is_authenticated:
+        redirect('/login')
+
     db_sess = db_session.create_session()
     posts = list(db_sess.query(Post).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
