@@ -4,9 +4,9 @@ from data import db_session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 
-from data.posts import Post
 
-from data.accounts import Account
+
+from data import User , Post
 from forms.create_comment import CreateComment
 from forms.create_topic import CreateTopic
 from forms.login import LoginForm
@@ -101,7 +101,8 @@ def profile():
 @app.route('/basket')
 def basket():
     db_sess = db_session.create_session()
-    return render_template('basket.html', user=current_user, user_id=current_user.id, title='Профиль пользователя Orange forum')
+    posts = db_sess.query(Post).filter(Post.id_author == current_user.id).all()
+    return render_template('basket.html', user=current_user, user_id=current_user.id, title='Профиль пользователя Orange forum',lapkas=posts)
 
 
 @app.route('/profile/<int:id>')
@@ -109,7 +110,7 @@ def profile_id(id):
     if id == current_user.id:
         return redirect("/profile")
     db_sess = db_session.create_session()
-    user = db_sess.query(Account).filter(Account.id == id).first()
+    user = db_sess.query(User).filter(User.id == id).first()
     posts = list(db_sess.query(Post).filter(Post.author_id == user.id).all())
     posts.sort(key=lambda x: x.created_date, reverse=True)
     statics = [f'Постов {len(posts)}', f'Лайков под постами {user.count_like()}', f'Комментариев под постами {user.count_comm()}', f'Оставленных комментариев {user.count_my_comm()}']
@@ -146,10 +147,13 @@ def create_comment(id):
     form = CreateComment()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
+        #post = Post(title='лапка 1', id_author=current_user.id, text='крутая лапка', costs=4)
+        #post = Post(title='лапка 2', id_author=current_user.id, text='мега крутая лапка', costs=6)
+        #post = Post(title='лапка 3', id_author=current_user.id, text='супер пупер крутая лапка', costs=8)
         comm = Comment(post_id=id, author_id=current_user.id, text=form.text.data)
         post = db_sess.query(Post).filter(Post.id == id).first()
         post.count_comments += 1
-        db_sess.add(comm)
+        db_sess.add(post)
         db_sess.commit()
         return redirect(f'/post/{id}')
     return render_template('create_comment.html', title='Создание комментария', form=form)
@@ -166,11 +170,11 @@ def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        if db_sess.query(Account).filter(Account.email == form.email.data).first():
+        if db_sess.query(User).filter(User.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        user = Account()
+        user = User()
         user.name = form.name.data
         user.email = form.email.data
         user.about = form.about.data
@@ -183,9 +187,9 @@ def reqister():
 
 
 @login_manager.user_loader
-def load_user(account_id):
+def load_user(User_id):
     db_sess = db_session.create_session()
-    return db_sess.query(Account).get(account_id)
+    return db_sess.query(User).get(User_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -193,7 +197,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(Account).filter(Account.email == form.email.data).first()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
